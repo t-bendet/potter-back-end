@@ -2,9 +2,6 @@ const mongoose = require("mongoose");
 
 const storySchema = new mongoose.Schema(
   {
-    // owner:{
-
-    // },
     title: {
       type: String,
       required: true,
@@ -12,6 +9,10 @@ const storySchema = new mongoose.Schema(
     },
     body: {
       type: String,
+      required: true,
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
   },

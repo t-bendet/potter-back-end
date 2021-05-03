@@ -3,10 +3,10 @@ const Blog = require("../models/Blog");
 const router = new express.Router();
 
 router.post("/blogs", async (req, res) => {
-  const user = new User(req.body);
+  const blog = new Blog(req.body);
   try {
-    await user.save();
-    res.status(201).send(user);
+    await blog.save();
+    res.status(201).send(blog);
   } catch (e) {
     res.status(400).send(e.message);
   }
