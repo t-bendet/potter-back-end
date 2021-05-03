@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
     ],
     house: {
       type: String,
-      default: "not sorted",
+      default: "first year wizard",
     },
   },
   {
@@ -53,6 +53,17 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.virtual("stories", {
+  ref: "Story",
+  localField: "_id",
+  foreignField: "owner",
+});
+
+//TODO add tokens checker function to check if tokens are expierd
+
+//TODO replace password with ******************
+
+// express converts obj to JSON in the response,this method will attach to every response
 userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
@@ -60,7 +71,7 @@ userSchema.methods.toJSON = function () {
   delete userObject.tokens;
   return userObject;
 };
-
+//methods are used on model instances
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = jwt.sign({ _id: user._id.toString() }, "alohomora");
@@ -68,7 +79,7 @@ userSchema.methods.generateAuthToken = async function () {
   await user.save();
   return token;
 };
-
+// static methods are used on the model itself
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -81,6 +92,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user;
 };
 
+//every time a password is saved(including when creating an account)
 userSchema.pre("save", async function (next) {
   const user = this;
   if (user.isModified("password")) {
@@ -89,17 +101,18 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.plugin(uniqueValidator, {
+  message: "Error,{VALUE} is already taken, expected {PATH} to be unique.   ",
+});
+
 //TODO add remove all posts,blogs and drawings
+//when a user is deleted,delete all of his data
 
 // userSchema.pre("remove", async function (next) {
 //   const user = this;
 //   await Task.deleteMany({ owner: user._id });
 //   next();
 // });
-
-userSchema.plugin(uniqueValidator, {
-  message: "Error,{VALUE} is already taken, expected {PATH} to be unique.   ",
-});
 
 const User = mongoose.model("User", userSchema);
 
