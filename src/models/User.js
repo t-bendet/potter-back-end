@@ -3,6 +3,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const uniqueValidator = require("mongoose-unique-validator");
+const Story = require("./Story");
 
 const userSchema = new mongoose.Schema(
   {
@@ -108,11 +109,11 @@ userSchema.plugin(uniqueValidator, {
 //TODO add remove all posts,blogs and drawings
 //when a user is deleted,delete all of his data
 
-// userSchema.pre("remove", async function (next) {
-//   const user = this;
-//   await Task.deleteMany({ owner: user._id });
-//   next();
-// });
+userSchema.pre("remove", async function (next) {
+  const user = this;
+  await Story.deleteMany({ owner: user._id });
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 

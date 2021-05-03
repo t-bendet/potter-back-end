@@ -34,7 +34,7 @@ router.post("/users/logout", auth, async (req, res) => {
       return token.token !== req.token;
     });
     await req.user.save();
-    res.send();
+    res.send("user logout");
   } catch (e) {
     res.status(500).send();
   }
