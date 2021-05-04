@@ -3,8 +3,7 @@ const mongoose = require("mongoose");
 const drawingSchema = new mongoose.Schema(
   {
     imageFile: {
-      type: String,
-      // required: true,
+      type: Buffer,
     },
     description: {
       type: String,
