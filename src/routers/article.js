@@ -1,47 +1,47 @@
 const express = require("express");
-const Story = require("../models/Story");
+const Article = require("../models/Article");
 const auth = require("../middleware/auth");
 const router = new express.Router();
 
-router.post("/stories", auth, async (req, res) => {
-  const story = new Story({
+router.post("/articles", auth, async (req, res) => {
+  const article = new Article({
     ...req.body,
     owner: req.user._id,
   });
   try {
-    await story.save();
-    res.status(201).send(story);
+    await article.save();
+    res.status(201).send(article);
   } catch (e) {
     res.status(400).send(e.message);
   }
 });
 
-router.get("/stories/:id", auth, async (req, res) => {
+router.get("/articles/:id", auth, async (req, res) => {
   const _id = req.params.id;
 
   try {
-    const stories = await Story.findOne({ _id, owner: req.user._id });
+    const articles = await Article.findOne({ _id, owner: req.user._id });
 
-    if (!stories) {
+    if (!articles) {
       return res.status(404).send();
     }
 
-    res.send(stories);
+    res.send(articles);
   } catch (e) {
     res.status(500).send();
   }
 });
 
-router.get("/stories", auth, async (req, res) => {
+router.get("/articles", auth, async (req, res) => {
   try {
-    await req.user.populate("stories").execPopulate();
-    res.send(req.user.stories);
+    await req.user.populate("articles").execPopulate();
+    res.send(req.user.articles);
   } catch (e) {
     res.status(500).send();
   }
 });
 
-router.patch("/stories/:id", auth, async (req, res) => {
+router.patch("/articles/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["title", "body"];
   const isValidOperation = updates.every((update) =>
@@ -53,35 +53,35 @@ router.patch("/stories/:id", auth, async (req, res) => {
   }
 
   try {
-    const story = await Story.findOne({
+    const article = await Article.findOne({
       _id: req.params.id,
       owner: req.user._id,
     });
 
-    if (!story) {
+    if (!article) {
       return res.status(404).send();
     }
 
-    updates.forEach((update) => (story[update] = req.body[update]));
-    await story.save();
-    res.send(story);
+    updates.forEach((update) => (article[update] = req.body[update]));
+    await article.save();
+    res.send(article);
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
-router.delete("/stories/:id", auth, async (req, res) => {
+router.delete("/articles/:id", auth, async (req, res) => {
   try {
-    const story = await Story.findOneAndDelete({
+    const article = await Article.findOneAndDelete({
       _id: req.params.id,
       owner: req.user._id,
     });
 
-    if (!story) {
+    if (!article) {
       res.status(404).send();
     }
 
-    res.send(story);
+    res.send(article);
   } catch (e) {
     res.status(500).send();
   }

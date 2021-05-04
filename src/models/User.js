@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const uniqueValidator = require("mongoose-unique-validator");
 const Story = require("./Story");
+const Drawing = require("./Drawing");
+const Article = require("./Article");
 
 const userSchema = new mongoose.Schema(
   {
@@ -56,6 +58,18 @@ const userSchema = new mongoose.Schema(
 
 userSchema.virtual("stories", {
   ref: "Story",
+  localField: "_id",
+  foreignField: "owner",
+});
+
+userSchema.virtual("drawings", {
+  ref: "Drawing",
+  localField: "_id",
+  foreignField: "owner",
+});
+
+userSchema.virtual("articles", {
+  ref: "Article",
   localField: "_id",
   foreignField: "owner",
 });

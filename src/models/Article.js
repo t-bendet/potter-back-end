@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
 
-const drawingSchema = new mongoose.Schema(
+const articleSchema = new mongoose.Schema(
   {
-    imageFile: {
-      type: String,
-      // required: true,
-    },
-    description: {
+    title: {
       type: String,
       required: true,
+      trim: true,
     },
-    title: {
+    body: {
       type: String,
       required: true,
     },
@@ -24,6 +21,6 @@ const drawingSchema = new mongoose.Schema(
   }
 );
 
-const Drawing = mongoose.model("Drawing", drawingSchema);
+const Article = mongoose.model("Article", articleSchema);
 
-module.exports = Drawing;
+module.exports = Article;
