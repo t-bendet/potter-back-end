@@ -120,12 +120,13 @@ userSchema.plugin(uniqueValidator, {
   message: "Error,{VALUE} is already taken, expected {PATH} to be unique.   ",
 });
 
-//TODO add remove all posts,blogs and drawings
 //when a user is deleted,delete all of his data
 
 userSchema.pre("remove", async function (next) {
   const user = this;
   await Story.deleteMany({ owner: user._id });
+  await Drawing.deleteMany({ owner: user._id });
+  await Article.deleteMany({ owner: user._id });
   next();
 });
 

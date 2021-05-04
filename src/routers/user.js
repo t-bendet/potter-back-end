@@ -3,7 +3,6 @@ const auth = require("../middleware/auth");
 const User = require("../models/User");
 const router = new express.Router();
 
-//TODO test all end points before going forward
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
   try {
