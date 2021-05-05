@@ -1,7 +1,13 @@
 const mongoose = require("mongoose");
+const { MONGOODB_KEY } = require("../config/keys");
 
-mongoose.connect("mongodb://127.0.0.1:27017/potter-back-end", {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-});
+const uri = `mongodb+srv://${MONGOODB_KEY}@pottertribute.s7ojt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("MongoDB Connected…");
+  })
+  .catch((err) => console.log(err));
