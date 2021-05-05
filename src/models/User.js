@@ -81,6 +81,8 @@ userSchema.virtual("articles", {
 
 //TODO replace password with ******************
 
+//TODO add avater img and remove from response with  toJSON method
+
 // express converts obj to JSON in the response,this method will attach to every response
 userSchema.methods.toJSON = function () {
   const user = this;

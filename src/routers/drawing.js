@@ -88,46 +88,4 @@ router.delete("/drawings/:id", auth, async (req, res) => {
   }
 });
 
-const multer = require("multer");
-const upload = multer({
-  limits: {
-    // in bytes (1mb)
-    fileSize: 1000000,
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("file must be img file"));
-    }
-    cb(undefined, true);
-  },
-});
-
-router.post(
-  "/upload",
-  auth,
-  upload.single("imageFile"),
-  async (req, res) => {
-    req.user.imageFile = req.file.buffer;
-    await req.user.save();
-    res.send(req.user);
-  },
-  (err, req, res, next) => {
-    //add a conditional if err.code send err.code ,else send err.message
-    res.status(400).send({ error: err.message });
-  }
-);
-
 module.exports = router;
-
-// router.post("/drawings", auth, async (req, res) => {
-//   const drawing = new Drawing({
-//     ...req.body,
-//     owner: req.user._id,
-//   });
-//   try {
-//     await drawing.save();
-//     res.status(201).send(drawing);
-//   } catch (e) {
-//     res.status(400).send(e.message);
-//   }
-// });
