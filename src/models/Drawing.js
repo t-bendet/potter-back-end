@@ -4,6 +4,7 @@ const drawingSchema = new mongoose.Schema(
   {
     imageFile: {
       type: Buffer,
+      required: true,
     },
     description: {
       type: String,

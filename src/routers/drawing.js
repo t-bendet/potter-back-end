@@ -2,13 +2,35 @@ const express = require("express");
 const Drawing = require("../models/Drawing");
 const auth = require("../middleware/auth");
 const router = new express.Router();
+const sharp = require("sharp");
+const multer = require("multer");
 
-router.post("/drawings", auth, async (req, res) => {
-  const drawing = new Drawing({
-    ...req.body,
-    owner: req.user._id,
-  });
+const upload = multer({
+  limits: {
+    // in bytes (1mb)
+    fileSize: 1000000,
+  },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("file must be img file"));
+    }
+    cb(undefined, true);
+  },
+});
+
+//TODO add error res for file size from multer
+
+router.post("/drawings", auth, upload.single("imageFile"), async (req, res) => {
   try {
+    const imageFile = await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toBuffer();
+    const drawing = new Drawing({
+      ...req.body,
+      owner: req.user._id,
+      imageFile,
+    });
     await drawing.save();
     res.status(201).send(drawing);
   } catch (e) {
@@ -25,8 +47,9 @@ router.get("/drawings/:id", auth, async (req, res) => {
     if (!drawing) {
       return res.status(404).send();
     }
-
-    res.send(drawing);
+    res.set("Content-Type", "image/png");
+    res.send(drawing.imageFile);
+    // res.send(drawing);
   } catch (e) {
     res.status(500).send();
   }

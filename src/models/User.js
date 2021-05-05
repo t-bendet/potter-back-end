@@ -50,9 +50,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "first year wizard",
     },
-    imageFile: {
-      type: Buffer,
-    },
   },
   {
     timestamps: true,
