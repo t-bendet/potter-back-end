@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { MONGOODB_KEY } = require("../config/keys");
 
-const uri = `mongodb+srv://${MONGOODB_KEY}@pottertribute.s7ojt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${MONGOODB_KEY}@pottertribute.s7ojt.mongodb.net/potterBackEnd?retryWrites=true&w=majority`;
 mongoose
   .connect(uri, {
     useNewUrlParser: true,
