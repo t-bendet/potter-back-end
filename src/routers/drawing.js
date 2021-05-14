@@ -38,18 +38,17 @@ router.post("/drawings", auth, upload.single("imageFile"), async (req, res) => {
   }
 });
 
-router.get("/drawings/:id", auth, async (req, res) => {
+router.get("/drawings/:id",  async (req, res) => {
   const _id = req.params.id;
 
   try {
-    const drawing = await Drawing.findOne({ _id, owner: req.user._id });
+    const drawing = await Drawing.findOne({ _id});
 
     if (!drawing) {
       return res.status(404).send();
     }
     res.set("Content-Type", "image/png");
     res.send(drawing.imageFile);
-    // res.send(drawing);
   } catch (e) {
     res.status(500).send();
   }
@@ -112,3 +111,21 @@ router.delete("/drawings/:id", auth, async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+// router.get("/drawings/:id", auth, async (req, res) => {
+//   const _id = req.params.id;
+
+//   try {
+//     const drawing = await Drawing.findOne({ _id, owner: req.user._id });
+
+//     if (!drawing) {
+//       return res.status(404).send();
+//     }
+//     res.set("Content-Type", "image/png");
+//     res.send(drawing.imageFile);
+//   } catch (e) {
+//     res.status(500).send();
+//   }
+// });

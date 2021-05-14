@@ -99,10 +99,15 @@ userSchema.methods.generateAuthToken = async function () {
 // static methods are used on the model itself
 userSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });
+  console.log(email, password, "userrrrr");
+
   if (!user) {
     throw new Error("Unable to login");
   }
+
   const isMatch = await bcrypt.compare(password, user.password);
+  console.log(isMatch, "isMatch");
+
   if (!isMatch) {
     throw new Error("Unable to login");
   }
