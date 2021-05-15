@@ -27,7 +27,7 @@ router.post("/drawings", auth, upload.single("imageFile"), async (req, res) => {
       .png()
       .toBuffer();
     const drawing = new Drawing({
-      ...req.body,
+      ...JSON.parse(req.body.body),
       owner: req.user._id,
       imageFile,
     });
@@ -38,11 +38,11 @@ router.post("/drawings", auth, upload.single("imageFile"), async (req, res) => {
   }
 });
 
-router.get("/drawings/:id",  async (req, res) => {
+router.get("/drawings/:id", async (req, res) => {
   const _id = req.params.id;
 
   try {
-    const drawing = await Drawing.findOne({ _id});
+    const drawing = await Drawing.findOne({ _id });
 
     if (!drawing) {
       return res.status(404).send();
@@ -66,7 +66,7 @@ router.get("/drawings", auth, async (req, res) => {
 router.patch("/drawings/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   //TODO update img file or not?
-  const allowedUpdates = ["description", "title", "imageFile"];
+  const allowedUpdates = ["description", "title"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
@@ -111,8 +111,6 @@ router.delete("/drawings/:id", auth, async (req, res) => {
 });
 
 module.exports = router;
-
-
 
 // router.get("/drawings/:id", auth, async (req, res) => {
 //   const _id = req.params.id;
