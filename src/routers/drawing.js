@@ -23,11 +23,11 @@ const upload = multer({
 router.post("/drawings", auth, upload.single("imageFile"), async (req, res) => {
   try {
     const imageFile = await sharp(req.file.buffer)
-      .resize({ width: 250, height: 250 })
+      .resize({ width: 500, height: 500 })
       .png()
       .toBuffer();
     const drawing = new Drawing({
-      ...JSON.parse(req.body.body),
+      ...req.body,
       owner: req.user._id,
       imageFile,
     });
@@ -63,35 +63,49 @@ router.get("/drawings", auth, async (req, res) => {
   }
 });
 
-router.patch("/drawings/:id", auth, async (req, res) => {
-  const updates = Object.keys(req.body);
-  //TODO update img file or not?
-  const allowedUpdates = ["description", "title"];
-  const isValidOperation = updates.every((update) =>
-    allowedUpdates.includes(update)
-  );
+router.patch(
+  "/drawings/:id",
+  auth,
+  upload.single("imageFile"),
+  async (req, res) => {
+    req.body.body = JSON.parse(req.body.body);
+    const updates = Object.keys(req.body.body);
+    //TODO update img file or not?
+    console.log(updates);
+    const allowedUpdates = ["description", "title", "imageFile"];
+    const isValidOperation = updates.every((update) =>
+      allowedUpdates.includes(update)
+    );
 
-  if (!isValidOperation) {
-    return res.status(400).send({ error: "Invalid updates!" });
-  }
-
-  try {
-    const drawing = await Drawing.findOne({
-      _id: req.params.id,
-      owner: req.user._id,
-    });
-
-    if (!drawing) {
-      return res.status(404).send();
+    if (!isValidOperation) {
+      return res.status(400).send({ error: "Invalid updates!" });
     }
-
-    updates.forEach((update) => (drawing[update] = req.body[update]));
-    await drawing.save();
-    res.send(drawing);
-  } catch (e) {
-    res.status(400).send(e);
+    try {
+      const drawing = await Drawing.findOne({
+        _id: req.params.id,
+        owner: String(req.user._id),
+      });
+      if (!drawing) {
+        return res.status(404).send();
+      }
+      updates.forEach((update) => (drawing[update] = req.body.body[update]));
+      console.log(updates, "updates");
+      if (req.file && req.file.buffer.length) {
+        console.log("hereeeeeeeeeeeeeeeeee");
+        const newImageFile = await sharp(req.file.buffer)
+          .resize({ width: 500, height: 500 })
+          .png()
+          .toBuffer();
+        drawing.imageFile = newImageFile;
+      }
+      await drawing.save();
+      res.send(drawing);
+    } catch (e) {
+      console.log(e);
+      res.status(400).send(e);
+    }
   }
-});
+);
 
 router.delete("/drawings/:id", auth, async (req, res) => {
   try {
