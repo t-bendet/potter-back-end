@@ -15,7 +15,6 @@ router.post("/users", async (req, res) => {
 });
 
 router.post("/users/login", async (req, res) => {
-  console.log(req.body);
   try {
     const user = await User.findByCredentials(
       req.body.email,
@@ -24,11 +23,10 @@ router.post("/users/login", async (req, res) => {
     const token = await user.generateAuthToken();
     res.send({ user, token });
   } catch (e) {
-    console.log(e);
-    res.status(400).send();
+    res.status(400).send({ error: "Invalid updates!" });
   }
 });
-
+// "Login Error,are you a wizard Harry?"
 router.post("/users/logout", auth, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
@@ -37,7 +35,7 @@ router.post("/users/logout", auth, async (req, res) => {
     await req.user.save();
     res.send("user logout");
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send("Mischief Not Managed!");
   }
 });
 
@@ -71,7 +69,7 @@ router.patch("/users/me", auth, async (req, res) => {
     await req.user.save();
     res.send(req.user);
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send(e.message);
   }
 });
 

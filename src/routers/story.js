@@ -41,6 +41,16 @@ router.get("/stories", auth, async (req, res) => {
   }
 });
 
+router.get("/admin/stories", async (req, res) => {
+  try {
+    const allStories = await Story.find({});
+
+    res.send(allStories);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 router.patch("/stories/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["title", "body"];

@@ -63,6 +63,16 @@ router.get("/drawings", auth, async (req, res) => {
   }
 });
 
+router.get("/admin/drawings", async (req, res) => {
+  try {
+    const allDrawings = await Drawing.find({});
+
+    res.send(allDrawings);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 router.patch(
   "/drawings/:id",
   auth,
@@ -91,7 +101,6 @@ router.patch(
       updates.forEach((update) => (drawing[update] = req.body.body[update]));
       console.log(updates, "updates");
       if (req.file && req.file.buffer.length) {
-        console.log("hereeeeeeeeeeeeeeeeee");
         const newImageFile = await sharp(req.file.buffer)
           .resize({ width: 500, height: 500 })
           .png()
