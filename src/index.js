@@ -16,6 +16,10 @@ app.use(storyRouter);
 app.use(drawingRoute);
 app.use(articleRoute);
 
+app.get("/", (req, res) => {
+  res.send("it's kind of boring here,check out the routes");
+});
+
 app.listen(port, () => {
   console.log("Server is up on port " + port);
 });
