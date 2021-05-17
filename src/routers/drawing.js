@@ -21,13 +21,14 @@ const upload = multer({
 //TODO add error res for file size from multer
 
 router.post("/drawings", auth, upload.single("imageFile"), async (req, res) => {
+  req.body.body = JSON.parse(req.body.body);
   try {
     const imageFile = await sharp(req.file.buffer)
       .resize({ width: 500, height: 500 })
       .png()
       .toBuffer();
     const drawing = new Drawing({
-      ...req.body,
+      ...req.body.body,
       owner: req.user._id,
       imageFile,
     });
