@@ -7,8 +7,8 @@ const multer = require("multer");
 
 const upload = multer({
   limits: {
-    // in bytes (1mb)
-    fileSize: 1000000,
+    // in bytes (4mb)
+    fileSize: 4000000,
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
@@ -24,7 +24,6 @@ router.post("/drawings", auth, upload.single("imageFile"), async (req, res) => {
   req.body.body = JSON.parse(req.body.body);
   try {
     const imageFile = await sharp(req.file.buffer)
-      .resize({ width: 500, height: 500 })
       .png()
       .toBuffer();
     const drawing = new Drawing({
@@ -67,7 +66,6 @@ router.get("/drawings", auth, async (req, res) => {
 router.get("/admin/drawings", async (req, res) => {
   try {
     const allDrawings = await Drawing.find({});
-
     res.send(allDrawings);
   } catch (e) {
     res.status(500).send();
@@ -135,19 +133,3 @@ router.delete("/drawings/:id", auth, async (req, res) => {
 });
 
 module.exports = router;
-
-// router.get("/drawings/:id", auth, async (req, res) => {
-//   const _id = req.params.id;
-
-//   try {
-//     const drawing = await Drawing.findOne({ _id, owner: req.user._id });
-
-//     if (!drawing) {
-//       return res.status(404).send();
-//     }
-//     res.set("Content-Type", "image/png");
-//     res.send(drawing.imageFile);
-//   } catch (e) {
-//     res.status(500).send();
-//   }
-// });
